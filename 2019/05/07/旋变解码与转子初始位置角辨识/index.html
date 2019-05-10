@@ -113,24 +113,26 @@
 
 
 
-  <meta name="description" content="123456#include&amp;lt;stdio.h&amp;gt;int main(void)&amp;#123;    printf(&quot;hello world&quot;);    return 0;&amp;#125; 「hello world」这个例程在Brian Kernighan和Dennis M. Ritchie合著的《The C Programme Language》出现并广泛流行，从此在各种程序语言的入门教材中，类">
+  <meta name="description" content="为解决最近实际工作中遇到一个问题，深入研究了一下目前纯电动汽车IPMSM中经常使用的一种角度传感器——旋转变压器（这里特指磁阻式多极旋转变压器），本文将会介绍旋转变压器的结构、原理、公式推导以及相应的角度解码方法（以AD2S1210芯片为例），详细解码过程利用Simulink仿真实现，配合使用的相关Datasheet会以链接形式放在文章最后，本文预计在2019年5月12日24时前完成发布，Dea">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="http://ggblog.cc/2018/05/08/hello-world/index.html">
+<meta property="og:title" content="旋变解码与电机转子初始位置辨识">
+<meta property="og:url" content="http://ggblog.cc/2019/05/07/旋变解码与转子初始位置角辨识/index.html">
 <meta property="og:site_name" content="BDionysus&#39;s Blog">
-<meta property="og:description" content="123456#include&amp;lt;stdio.h&amp;gt;int main(void)&amp;#123;    printf(&quot;hello world&quot;);    return 0;&amp;#125; 「hello world」这个例程在Brian Kernighan和Dennis M. Ritchie合著的《The C Programme Language》出现并广泛流行，从此在各种程序语言的入门教材中，类">
+<meta property="og:description" content="为解决最近实际工作中遇到一个问题，深入研究了一下目前纯电动汽车IPMSM中经常使用的一种角度传感器——旋转变压器（这里特指磁阻式多极旋转变压器），本文将会介绍旋转变压器的结构、原理、公式推导以及相应的角度解码方法（以AD2S1210芯片为例），详细解码过程利用Simulink仿真实现，配合使用的相关Datasheet会以链接形式放在文章最后，本文预计在2019年5月12日24时前完成发布，Dea">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-05-10T04:13:35.000Z">
+<meta property="og:image" content="https://i.loli.net/2019/05/10/5cd58ab4b1840.png">
+<meta property="og:updated_time" content="2019-05-10T14:32:57.253Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hello World">
-<meta name="twitter:description" content="123456#include&amp;lt;stdio.h&amp;gt;int main(void)&amp;#123;    printf(&quot;hello world&quot;);    return 0;&amp;#125; 「hello world」这个例程在Brian Kernighan和Dennis M. Ritchie合著的《The C Programme Language》出现并广泛流行，从此在各种程序语言的入门教材中，类">
+<meta name="twitter:title" content="旋变解码与电机转子初始位置辨识">
+<meta name="twitter:description" content="为解决最近实际工作中遇到一个问题，深入研究了一下目前纯电动汽车IPMSM中经常使用的一种角度传感器——旋转变压器（这里特指磁阻式多极旋转变压器），本文将会介绍旋转变压器的结构、原理、公式推导以及相应的角度解码方法（以AD2S1210芯片为例），详细解码过程利用Simulink仿真实现，配合使用的相关Datasheet会以链接形式放在文章最后，本文预计在2019年5月12日24时前完成发布，Dea">
+<meta name="twitter:image" content="https://i.loli.net/2019/05/10/5cd58ab4b1840.png">
 
 
 
 
 
 
-  <link rel="canonical" href="http://ggblog.cc/2018/05/08/hello-world/"/>
+  <link rel="canonical" href="http://ggblog.cc/2019/05/07/旋变解码与转子初始位置角辨识/"/>
 
 
 
@@ -140,7 +142,7 @@
   };
 </script>
 
-  <title>Hello World | BDionysus's Blog</title>
+  <title>旋变解码与电机转子初始位置辨识 | BDionysus's Blog</title>
   
 
 
@@ -313,7 +315,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://ggblog.cc/2018/05/08/hello-world/">
+    <link itemprop="mainEntityOfPage" href="http://ggblog.cc/2019/05/07/旋变解码与转子初始位置角辨识/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="BDionysus">
@@ -330,7 +332,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">Hello World
+          <h2 class="post-title" itemprop="name headline">旋变解码与电机转子初始位置辨识
               
             
           </h2>
@@ -355,7 +357,7 @@
                 
               
 
-              <time title="Created: 2018-05-08 22:52:51" itemprop="dateCreated datePublished" datetime="2018-05-08T22:52:51+08:00">2018-05-08</time>
+              <time title="Created: 2019-05-07 23:07:46" itemprop="dateCreated datePublished" datetime="2019-05-07T23:07:46+08:00">2019-05-07</time>
             
 
             
@@ -373,7 +375,7 @@
                 <span class="post-meta-item-text">In</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Web/" itemprop="url" rel="index"><span itemprop="name">Web</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Motor-Tech/" itemprop="url" rel="index"><span itemprop="name">Motor Tech</span></a></span>
 
                 
                 
@@ -388,8 +390,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2018/05/08/hello-world/#comments" itemprop="discussionUrl">
-                  <span class="post-meta-item-text">Comments: </span> <span class="post-comments-count valine-comment-count" data-xid="/2018/05/08/hello-world/" itemprop="commentCount"></span>
+                <a href="/2019/05/07/旋变解码与转子初始位置角辨识/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">Comments: </span> <span class="post-comments-count valine-comment-count" data-xid="/2019/05/07/旋变解码与转子初始位置角辨识/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -425,37 +427,7 @@
       
 
       
-        <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"hello world"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>「hello world」这个例程在<a href="https://en.wikipedia.org/wiki/Brian_Kernighan" target="_blank" rel="noopener">Brian Kernighan</a>和<a href="https://en.wikipedia.org/wiki/Dennis_Ritchie" target="_blank" rel="noopener">Dennis M. Ritchie</a>合著的《The C Programme Language》出现并广泛流行，从此在各种程序语言的入门教材中，类似的例程反复出现，对于一部分程序员（显然并不包括我）来说，大多数事物的开端对他们而言与这段例程有着相似的地位和性质，所以作为一名「编程爱好者」，第一个自建网站的第一篇文章就以Hello World作为标题了，至少会让我个人觉得自己离程序员又进一步[尬笑]。<br><a id="more"></a></p>
-<h3 id="为什么要建站"><a href="#为什么要建站" class="headerlink" title="为什么要建站"></a>为什么要建站</h3><p>这个问题同样也可以理解为为什么不在各大平台生产内容，毕竟现在是2018年，各大内容和新媒体平台层出不穷，最快只需要几次鼠标单击就可以从零开始生产内容，但是缺点显而易见，尤其对于大陆的网民来说（抛开GFW不讲），对我个人而言建立个人网站大概出于下面这些原因，排名分先后：</p>
-<ul>
-<li>开放万维网（这一点以后的文章会展开讲）</li>
-<li>避免生产内容的被审查或者说被和谐</li>
-<li>对我来说建站过程很酷很有趣</li>
-<li>虚拟价值感的获取（装逼）</li>
-<li>可以学到些东西</li>
-</ul>
-<h3 id="为什么要写Blog"><a href="#为什么要写Blog" class="headerlink" title="为什么要写Blog"></a>为什么要写Blog</h3><p>想法源起自一些上下班或者发呆过程中脑海中跳出的烂七八糟的想法，方便的时候还会用OneNote记下来，大多数情况下这些想法基本上都在第二天起床前消失不见，实际上这非常让人沮丧，一方面记下来的那些东西永远停留在支离破碎的状态下，另一方面虽然那些想法消失不见了，但是大脑会始终记得它遗失了很多想法这件事，前者成为我写Blog的动力之一，后者则成为我使用<a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>搭建博客的原因：</p>
-<ul>
-<li>配合<a href="https://nodejs.org/en/" target="_blank" rel="noopener">Node.js</a>有极快页面渲染速度</li>
-<li>支持<a href="http://www.markdown.cn/" target="_blank" rel="noopener">Markdown</a></li>
-<li>iOS平台有大量优秀的Markdown编辑器</li>
-</ul>
-<p>当然写Blog本身有很多优点或者说收益，<a href="https://problogger.com/7-reasons-why-personal-blogs-rock/" target="_blank" rel="noopener">Darren Rowse</a>在他的Blog上曾经写过七个理由，当然是不是这样需要坚持写下去才知道</p>
-<ul>
-<li>学会写作Blog的技巧（teach you the skills of blogging）</li>
-<li>熟悉Blog工具（familiarize you with the tools of blogging）</li>
-<li>时间管理（help you work out how much time you have）</li>
-<li>了解自己是否可以长期坚持写下去（help you work out if you can sustain blogging for the long term）</li>
-<li>体验Blog「文化」（give you a taste of blogging ‘culture’）</li>
-<li>了解自我（help you define a niche）</li>
-<li>帮助你找到读者（help you find a readership）</li>
-</ul>
-<p>最后用知名Blog架设服务提供网站<a href="https://zh-cn.wordpress.com/create-blog/" target="_blank" rel="noopener">WoedPress</a>上的一句话总结一下上面想说明的两个问题：</p>
-<blockquote>
-<p>建立专属于您自己的在线存在感，并将其与全世界分享。</p>
-</blockquote>
-<p>当然，对我个人而言更重要或者说更愿意主动去做的是前半句。</p>
+        <p> 为解决最近实际工作中遇到一个问题，深入研究了一下目前纯电动汽车IPMSM中经常使用的一种角度传感器——旋转变压器（这里特指磁阻式多极旋转变压器），本文将会介绍旋转变压器的结构、原理、公式推导以及相应的角度解码方法（以AD2S1210芯片为例），详细解码过程利用Simulink仿真实现，配合使用的相关Datasheet会以链接形式放在文章最后，本文预计在2019年5月12日24时前完成发布，Deadline是第一生产力！<br> <a id="more"></a><br> 顺便测试下新图床：<img src="https://i.loli.net/2019/05/10/5cd58ab4b1840.png" alt=""> </p>
 
       
     </div>
@@ -483,15 +455,15 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2018/08/16/To Cc/" rel="next" title="To Cc">
+                <i class="fa fa-chevron-left"></i> To Cc
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/05/11/Open Web and Open Mind/" rel="prev" title="Open Web and Open Mind">
-                Open Web and Open Mind <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -543,17 +515,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            Table of Contents
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            Overview
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -647,22 +610,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要建站"><span class="nav-number">1.</span> <span class="nav-text">为什么要建站</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要写Blog"><span class="nav-number">2.</span> <span class="nav-text">为什么要写Blog</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
