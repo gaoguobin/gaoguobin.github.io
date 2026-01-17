@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Introduction: Noise is EverywhereImagine yourself sitting in a noisy laboratory, writing code. People around you are chatting, and countless devices are humming. While sometimes you wish those chatty">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Derivation and Implementation of First-Order Digital Low-Pass Filter">
+<meta property="og:url" content="http://example.com/2022/01/22/first-order-digital-low-pass-filter/index.html">
+<meta property="og:site_name" content="Guobin&#39;s Blog">
+<meta property="og:description" content="Introduction: Noise is EverywhereImagine yourself sitting in a noisy laboratory, writing code. People around you are chatting, and countless devices are humming. While sometimes you wish those chatty">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/gaoguobin/image/master/lpf_problem_demo.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/gaoguobin/image/master/1st_Order_Lowpass_Filter_RC.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/gaoguobin/image/master/lpf_fc_comparison.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/gaoguobin/image/master/lpf_fixp_problem.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/gaoguobin/image/master/lpf_fixp_optimized.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/gaoguobin/image/master/lpf_fft_analysis.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/gaoguobin/image/master/lpf_bode_plot.png">
+<meta property="article:published_time" content="2022-01-22T10:30:00.000Z">
+<meta property="article:modified_time" content="2026-01-17T14:58:55.784Z">
+<meta property="article:author" content="guobin">
+<meta property="article:tag" content="Signal Processing">
+<meta property="article:tag" content="Filter">
+<meta property="article:tag" content="Embedded">
+<meta property="article:tag" content="DSP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/gaoguobin/image/master/lpf_problem_demo.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Derivation and Implementation of First-Order Digital Low-Pass Filter</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/01/22/first-order-digital-low-pass-filter/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/01/22/first-order-digital-low-pass-filter/&text=Derivation and Implementation of First-Order Digital Low-Pass Filter"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/01/22/first-order-digital-low-pass-filter/&title=Derivation and Implementation of First-Order Digital Low-Pass Filter"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/01/22/first-order-digital-low-pass-filter/&is_video=false&description=Derivation and Implementation of First-Order Digital Low-Pass Filter"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Derivation and Implementation of First-Order Digital Low-Pass Filter&body=Check out this article: http://example.com/2022/01/22/first-order-digital-low-pass-filter/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/01/22/first-order-digital-low-pass-filter/&title=Derivation and Implementation of First-Order Digital Low-Pass Filter"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/01/22/first-order-digital-low-pass-filter/&title=Derivation and Implementation of First-Order Digital Low-Pass Filter"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/01/22/first-order-digital-low-pass-filter/&title=Derivation and Implementation of First-Order Digital Low-Pass Filter"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/01/22/first-order-digital-low-pass-filter/&title=Derivation and Implementation of First-Order Digital Low-Pass Filter"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/01/22/first-order-digital-low-pass-filter/&name=Derivation and Implementation of First-Order Digital Low-Pass Filter&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/01/22/first-order-digital-low-pass-filter/&t=Derivation and Implementation of First-Order Digital Low-Pass Filter"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Introduction-Noise-is-Everywhere"><span class="toc-number">1.</span> <span class="toc-text">Introduction: Noise is Everywhere</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-Typical-Filtering-Problem"><span class="toc-number">2.</span> <span class="toc-text">A Typical Filtering Problem</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#From-RC-Filter-to-Digital-World"><span class="toc-number">3.</span> <span class="toc-text">From RC Filter to Digital World</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Mathematical-Derivation"><span class="toc-number">3.1.</span> <span class="toc-text">Mathematical Derivation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Discretization-From-Continuous-to-Digital"><span class="toc-number">3.2.</span> <span class="toc-text">Discretization: From Continuous to Digital</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#A-More-Friendly-Form"><span class="toc-number">3.3.</span> <span class="toc-text">A More Friendly Form</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Code-Implementation"><span class="toc-number">3.4.</span> <span class="toc-text">Code Implementation</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-Pitfall-of-Fixed-Point-Implementation"><span class="toc-number">4.</span> <span class="toc-text">The Pitfall of Fixed-Point Implementation</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Fixed-Point-Implementation"><span class="toc-number">4.1.</span> <span class="toc-text">Fixed-Point Implementation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Root-Cause-of-the-Problem"><span class="toc-number">4.2.</span> <span class="toc-text">Root Cause of the Problem</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Optimization-Solution"><span class="toc-number">4.3.</span> <span class="toc-text">Optimization Solution</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Optimized-Code"><span class="toc-number">4.4.</span> <span class="toc-text">Optimized Code</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Frequency-Domain-Analysis-Deeper-Understanding"><span class="toc-number">5.</span> <span class="toc-text">Frequency Domain Analysis: Deeper Understanding</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Bode-Plot-The-%E2%80%9CFingerprint%E2%80%9D-of-a-Filter"><span class="toc-number">5.1.</span> <span class="toc-text">Bode Plot: The “Fingerprint” of a Filter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Quantitative-Analysis"><span class="toc-number">5.2.</span> <span class="toc-text">Quantitative Analysis</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Practical-Recommendations"><span class="toc-number">6.</span> <span class="toc-text">Practical Recommendations</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#More-Advanced-Filters"><span class="toc-number">7.</span> <span class="toc-text">More Advanced Filters</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Conclusion"><span class="toc-number">8.</span> <span class="toc-text">Conclusion</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Derivation and Implementation of First-Order Digital Low-Pass Filter
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">guobin</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2022-01-22T10:30:00.000Z" class="dt-published" itemprop="datePublished">2022-01-22</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Embedded-Development/">Embedded Development</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/DSP/" rel="tag">DSP</a>, <a class="p-category" href="/tags/Embedded/" rel="tag">Embedded</a>, <a class="p-category" href="/tags/Filter/" rel="tag">Filter</a>, <a class="p-category" href="/tags/Signal-Processing/" rel="tag">Signal Processing</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="Introduction-Noise-is-Everywhere"><a href="#Introduction-Noise-is-Everywhere" class="headerlink" title="Introduction: Noise is Everywhere"></a>Introduction: Noise is Everywhere</h2><p>Imagine yourself sitting in a noisy laboratory, writing code. People around you are chatting, and countless devices are humming. While sometimes you wish those chatty people would just “shut up,” there’s a more elegant solution: <strong>filter out all the information you don’t care about</strong>.</p>
+<p>Filtering is one of the most common operations in signal processing. It can be extremely simple or incredibly complex, depending on what you want to filter. Today, let’s discuss the simplest type: the <strong>First-Order Infinite Impulse Response (IIR) Low-Pass Filter</strong>, sometimes also called the <strong>Exponential Moving Average Filter</strong>.</p>
+<h2 id="A-Typical-Filtering-Problem"><a href="#A-Typical-Filtering-Problem" class="headerlink" title="A Typical Filtering Problem"></a>A Typical Filtering Problem</h2><p>Let’s use a concrete example to illustrate the necessity of filtering. Suppose we have a desired signal with a frequency of 50Hz, but the received signal is mixed with high-frequency noise at 5000Hz (in real applications, the noise spectrum is much richer; this is just for demonstration):</p>
+<p><img src="https://raw.githubusercontent.com/gaoguobin/image/master/lpf_problem_demo.png" alt="Filtering Problem Demo"></p>
+<p>The above shows a zero-crossing detection scenario. If we directly use the noisy received signal (rec_signal) for detection, the result (dec_signal, pink line) is completely unusable—noise causes numerous false triggers.</p>
+<p>A harsh reality is: <strong>noise is almost inevitable in embedded applications</strong>, especially when dealing with analog signals. So how do we get rid of this noise?</p>
+<p>The answer might lie in the hardware engineer’s toolbox.</p>
+<h2 id="From-RC-Filter-to-Digital-World"><a href="#From-RC-Filter-to-Digital-World" class="headerlink" title="From RC Filter to Digital World"></a>From RC Filter to Digital World</h2><p>This is a classic RC low-pass filter circuit:</p>
+<p><img src="https://raw.githubusercontent.com/gaoguobin/image/master/1st_Order_Lowpass_Filter_RC.png" alt="RC Filter"></p>
+<p>The working principle of this circuit is clever: the capacitor presents low impedance to high-frequency signals (acting like a short circuit), while presenting high impedance to low-frequency signals, allowing the signal to primarily flow to the load. The values of the resistor and capacitor determine the cutoff frequency—the dividing point.</p>
+<p>Hardware engineers often use this circuit to filter out high-frequency noise. The good news is that we can use mathematics to “translate” this analog circuit into digital code!</p>
+<h3 id="Mathematical-Derivation"><a href="#Mathematical-Derivation" class="headerlink" title="Mathematical Derivation"></a>Mathematical Derivation</h3><p>The differential equation of this circuit is not difficult to write:</p>
+<p>$$ \frac{dV_{out(t)}}{dt} = \frac{1}{RC}\left(V_{in(t)}-V_{out(t)}\right) \tag{1} $$</p>
+<p>Applying <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Laplace_transform">Laplace Transform</a>:</p>
+<p>$$ sV_{out(s)} = \frac{1}{RC}\left(V_{in(s)}-V_{out(s)}\right) \tag{2} $$</p>
+<p>We get the <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Transfer_function">Transfer Function</a>:</p>
+<p>$$ \frac{V_{out(s)}}{V_{in(s)}} = \frac{1}{RCs+1} = \frac{1}{\tau s+1} \tag{3} $$</p>
+<p>Where $\tau=RC$ is the time constant of the system. From the transfer function, we can see that the RC filter is a typical first-order linear system.</p>
+<p>However, the above formula describes a continuous system. To implement it in a digital system, we need to perform <strong>discretization</strong>.</p>
+<h3 id="Discretization-From-Continuous-to-Digital"><a href="#Discretization-From-Continuous-to-Digital" class="headerlink" title="Discretization: From Continuous to Digital"></a>Discretization: From Continuous to Digital</h3><p>With the powerful tool of <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Z-transform">Z-Transform</a>, we can map the s-domain to the z-domain:</p>
+<p>$$ s=\frac{1-z^{-1}}{T_{s}} \tag{4} $$</p>
+<p>Where <code>$T_s$</code> is the sampling period.</p>
+<p>Substituting equation (4) into equation (3):</p>
+<p>$$ \frac{V_{out(z)}}{V_{in(z)}} = \frac{1}{\tau\frac{1-z^{-1}}{T_{s}}+1} = \frac{T_{s}}{\tau(1-z^{-1})+T_{s}} \tag{5} $$</p>
+<p>Rearranging:</p>
+<p>$$ V_{in(z)} = (1+\frac{\tau}{T_{s}})V_{out(z)}-\frac{\tau}{T_{s}}V_{out(z)}z^{-1} \tag{6} $$</p>
+<p>Inverse transforming back to the time domain:</p>
+<p>$$ V_{in(n)} = (1+\frac{\tau}{T_{s}})V_{out(n)}-\frac{\tau}{T_{s}}V_{out(n-1)} \tag{7} $$</p>
+<p>Finally, we get the discretized expression of the RC filter:</p>
+<p>$$ V_{out(n)} = \frac{T_{s}}{T_{s}+\tau}V_{in(n)}+(1-\frac{T_{s}}{T_{s}+\tau})V_{out(n-1)} \tag{8} $$</p>
+<h3 id="A-More-Friendly-Form"><a href="#A-More-Friendly-Form" class="headerlink" title="A More Friendly Form"></a>A More Friendly Form</h3><p>Let $a = \frac{T_{s}}{T_{s}+\tau}$, and the formula simplifies to:</p>
+<p>$$ V_{out(n)} = aV_{in(n)} + (1-a)V_{out(n-1)} \tag{9} $$</p>
+<p>So elegant! This formula tells us: current output = a small portion of input + a large portion of previous output.</p>
+<p>To make the formula more practical, let’s express coefficient a in terms of frequency.</p>
+<p>The relationship between <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Time_constant">time constant</a> $\tau$ and <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Cutoff_frequency">cutoff frequency</a> $f_c$:</p>
+<p>$$ \tau = \frac{1}{2\pi f_{c}} \tag{10} $$</p>
+<p>The relationship between sampling period $T_s$ and sampling frequency:</p>
+<p>$$ T_{s} = \frac{1}{f_{s}} \tag{11} $$</p>
+<p>So coefficient a can be written as:</p>
+<p>$$ a = \frac{2\pi f_{c}}{2\pi f_{c}+f_{s}} \tag{12} $$</p>
+<h3 id="Code-Implementation"><a href="#Code-Implementation" class="headerlink" title="Code Implementation"></a>Code Implementation</h3><p>Here’s the Python implementation:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">lpf</span>(<span class="params">x, fs, fc</span>):</span><br><span class="line">    a = <span class="number">2</span>*np.pi*fc/(<span class="number">2</span>*np.pi*fc+fs)</span><br><span class="line">    y = np.zeros_like(x)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(y)):</span><br><span class="line">        <span class="keyword">if</span> i == <span class="number">0</span>:</span><br><span class="line">            y[i] = <span class="number">0</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            y[i] = a*x[i]+(<span class="number">1</span>-a)*y[i-<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> y</span><br></pre></td></tr></table></figure>
+<p>Let’s see how it performs:</p>
+<p><img src="https://raw.githubusercontent.com/gaoguobin/image/master/lpf_fc_comparison.png" alt="Filter Effect at Different Cutoff Frequencies"></p>
+<p>The above shows three scenarios:</p>
+<ul>
+<li><strong>Original received signal</strong> (gray): mixed with 5000Hz noise</li>
+<li><strong>fc=3000Hz filtering</strong> (middle): noise is reduced but still noticeable</li>
+<li><strong>fc=500Hz filtering</strong> (bottom): noise almost disappears, signal is smooth</li>
+</ul>
+<p>The lower the cutoff frequency, the more obvious the filtering effect, but it also brings more phase delay—this is a trade-off in engineering.</p>
+<h2 id="The-Pitfall-of-Fixed-Point-Implementation"><a href="#The-Pitfall-of-Fixed-Point-Implementation" class="headerlink" title="The Pitfall of Fixed-Point Implementation"></a>The Pitfall of Fixed-Point Implementation</h2><p>So far, everything looks great. But there’s a problem: the code above uses <strong>floating-point operations</strong>.</p>
+<p>In the embedded world, especially on low-end MCUs without an FPU (Floating Point Unit), floating-point operations are very expensive. We need to implement it using <strong>fixed-point arithmetic</strong>.</p>
+<h3 id="Fixed-Point-Implementation"><a href="#Fixed-Point-Implementation" class="headerlink" title="Fixed-Point Implementation"></a>Fixed-Point Implementation</h3><p>A naive approach is: scale all values by a certain factor, round to integers, use integer operations, and finally scale back.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">lpf_fixp</span>(<span class="params">x, q, fs, fc</span>):</span><br><span class="line">    a = <span class="number">2</span>*np.pi*fc/(<span class="number">2</span>*np.pi*fc+fs)</span><br><span class="line">    a_scaled = np.<span class="built_in">round</span>(a*(<span class="number">1</span>&lt;&lt;q)).astype(<span class="built_in">int</span>)</span><br><span class="line">    y = np.zeros_like(x,dtype=<span class="built_in">int</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(y)):</span><br><span class="line">        <span class="keyword">if</span> i == <span class="number">0</span>:</span><br><span class="line">            y[i] = <span class="number">0</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            y[i] = ((a_scaled*x[i]+((<span class="number">1</span>&lt;&lt;q)-a_scaled)*y[i-<span class="number">1</span>])&gt;&gt;q)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> y</span><br></pre></td></tr></table></figure>
+<p>Seems fine? Let’s look at the actual result:</p>
+<p><img src="https://raw.githubusercontent.com/gaoguobin/image/master/lpf_fixp_problem.png" alt="Fixed-Point Filter Problem"></p>
+<p>Oh no! The filtered signal shows a significant <strong>negative DC bias</strong>, and this problem becomes more severe as the signal amplitude decreases.</p>
+<h3 id="Root-Cause-of-the-Problem"><a href="#Root-Cause-of-the-Problem" class="headerlink" title="Root Cause of the Problem"></a>Root Cause of the Problem</h3><p>Analyzing the fixed-point implementation formula carefully:</p>
+<p>$$ V_{out(n)} = V_{out(n-1)} + ((a_{scaled}*(V_{in(n)} - V_{out(n-1)}))>>q) \tag{15} $$</p>
+<p>The problem lies in the right shift operation! In fixed-point arithmetic, right shift is equivalent to division and loses precision.</p>
+<p>When $|a_{scaled}*(V_{in(n)} - V_{out(n-1)})|$ is less than the shift amount, the result becomes 0. This means new inputs cannot correctly affect the output, leading to cumulative error.</p>
+<h3 id="Optimization-Solution"><a href="#Optimization-Solution" class="headerlink" title="Optimization Solution"></a>Optimization Solution</h3><p>The solution is: don’t shift too many bits at once. We do it in two steps:</p>
+<ol>
+<li>First shift right by n bits, ensuring no precision loss</li>
+<li>Accumulate to an intermediate variable</li>
+<li>Finally shift right by the remaining (q-n) bits</li>
+</ol>
+<p>The formula is modified to:</p>
+<p>$$ V_{temp(n)} = V_{temp(n-1)} + ((a_{scaled}*(V_{in(n)} - V_{out(n-1)}))>>n) \tag{18} $$</p>
+<p>$$ V_{out(n)} = V_{temp(n)}>>(q - n) \tag{19} $$</p>
+<p>The key is choosing an appropriate n value that satisfies:</p>
+<p>$$ n \leq \log_2 a_{scaled} \tag{17} $$</p>
+<h3 id="Optimized-Code"><a href="#Optimized-Code" class="headerlink" title="Optimized Code"></a>Optimized Code</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">lpf_fixp_Op</span>(<span class="params">x, q, fs, fc</span>):</span><br><span class="line">    a = <span class="number">2</span>*np.pi*fc/(<span class="number">2</span>*np.pi*fc+fs)</span><br><span class="line">    a_scaled = np.<span class="built_in">round</span>(a*(<span class="number">1</span>&lt;&lt;q)).astype(<span class="built_in">int</span>)</span><br><span class="line">    n = np.floor(np.log2(a_scaled)).astype(<span class="built_in">int</span>)</span><br><span class="line">    y = np.zeros_like(x,dtype=<span class="built_in">int</span>)</span><br><span class="line">    temp = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(y)):</span><br><span class="line">        <span class="keyword">if</span> i == <span class="number">0</span>:</span><br><span class="line">            y[i] = <span class="number">0</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            temp = temp + ((a_scaled*(x[i] - y[i-<span class="number">1</span>]))&gt;&gt;n)</span><br><span class="line">            y[i] = temp&gt;&gt;(q-n)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> y</span><br></pre></td></tr></table></figure>
+<p>Comparison of results:</p>
+<p><img src="https://raw.githubusercontent.com/gaoguobin/image/master/lpf_fixp_optimized.png" alt="Optimized Fixed-Point Filter"></p>
+<p>Perfect! The negative DC bias is gone, and the fixed-point filter works correctly.</p>
+<h2 id="Frequency-Domain-Analysis-Deeper-Understanding"><a href="#Frequency-Domain-Analysis-Deeper-Understanding" class="headerlink" title="Frequency Domain Analysis: Deeper Understanding"></a>Frequency Domain Analysis: Deeper Understanding</h2><p>The previous analysis was based on the time domain (observing signal changes over time). In filter design and control systems, <strong>frequency domain analysis</strong> is more common—observing the attenuation of different frequency components.</p>
+<p>Let’s use FFT to examine the signal spectrum:</p>
+<p><img src="https://raw.githubusercontent.com/gaoguobin/image/master/lpf_fft_analysis.png" alt="FFT Spectrum Analysis"></p>
+<p>From the frequency perspective, we can clearly see:</p>
+<ul>
+<li>Input signal contains 50Hz (desired signal) and 5000Hz (noise)</li>
+<li>After fc=3000Hz filtering, 5000Hz noise is somewhat attenuated</li>
+<li>After fc=500Hz filtering, 5000Hz noise is almost completely suppressed</li>
+</ul>
+<h3 id="Bode-Plot-The-“Fingerprint”-of-a-Filter"><a href="#Bode-Plot-The-“Fingerprint”-of-a-Filter" class="headerlink" title="Bode Plot: The “Fingerprint” of a Filter"></a>Bode Plot: The “Fingerprint” of a Filter</h3><p>The Bode plot is a standard tool for describing a filter’s frequency response. Let’s plot it:</p>
+<p><img src="https://raw.githubusercontent.com/gaoguobin/image/master/lpf_bode_plot.png" alt="Bode Plot"></p>
+<p>Several important conclusions can be drawn from the Bode plot:</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Characteristic</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Magnitude Response</strong></td>
+<td>Higher frequency → more attenuation; lower cutoff frequency → stronger attenuation</td>
+</tr>
+<tr>
+<td><strong>Phase Response</strong></td>
+<td>Higher frequency → more phase lag; lower cutoff frequency → more lag</td>
+</tr>
+<tr>
+<td><strong>At Cutoff Frequency</strong></td>
+<td>Gain is -3.01dB (output is 0.707× input), phase shift is -45°</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="Quantitative-Analysis"><a href="#Quantitative-Analysis" class="headerlink" title="Quantitative Analysis"></a>Quantitative Analysis</h3><p>Let’s use specific data to illustrate:</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Frequency</th>
+<th>fc=500Hz</th>
+<th>fc=3000Hz</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>50Hz desired signal</strong></td>
+<td>0.5% attenuation, 5.7° phase shift</td>
+<td>0.02% attenuation, 0.96° phase shift</td>
+</tr>
+<tr>
+<td><strong>5000Hz noise</strong></td>
+<td>90% attenuation</td>
+<td>48.6% attenuation</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Designing a filter is all about trade-offs:</p>
+<ul>
+<li><strong>Noise sensitive</strong> → choose lower cutoff frequency, sacrifice phase</li>
+<li><strong>Phase sensitive</strong> → choose higher cutoff frequency, tolerate more noise</li>
+</ul>
+<h2 id="Practical-Recommendations"><a href="#Practical-Recommendations" class="headerlink" title="Practical Recommendations"></a>Practical Recommendations</h2><p>Based on the previous analysis, here are some engineering practical tips:</p>
+<ol>
+<li><strong>Q value selection</strong>: Determines the calculation accuracy of the actual filter cutoff frequency, also affects overflow risk</li>
+<li><strong>Nyquist theorem</strong>: Cannot filter noise above half the sampling frequency</li>
+<li><strong>Shift bits</strong>: Must satisfy $n \leq \log_2 a_{scaled}$, otherwise quantization error will occur</li>
+<li><strong>Phase consideration</strong>: The lower the cutoff frequency, the more serious the phase shift; use caution in phase-sensitive applications</li>
+</ol>
+<h2 id="More-Advanced-Filters"><a href="#More-Advanced-Filters" class="headerlink" title="More Advanced Filters"></a>More Advanced Filters</h2><p>Sometimes, like a greedy teenager, we want it <strong>all</strong>—both no attenuation and phase shift in the desired signal frequency band, and sufficient gain reduction in the noise frequency band.</p>
+<p>This requires more complex filters:</p>
+<ul>
+<li><strong>Butterworth Filter</strong>: Flattest passband</li>
+<li><strong>Chebyshev Filter</strong>: Steepest transition band</li>
+<li><strong>Elliptic Filter</strong>: Best overall performance</li>
+<li><strong>Kalman Filter</strong>: Optimal estimation based on state space</li>
+</ul>
+<p>Of course, those are stories for another time…</p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>The first-order digital low-pass filter is one of the most commonly used tools in embedded development:</p>
+<ul>
+<li><strong>Simple principle</strong>: Just two multiplications and one addition</li>
+<li><strong>Easy implementation</strong>: Both floating-point and fixed-point code are concise</li>
+<li><strong>Significant effect</strong>: Effectively suppresses high-frequency noise</li>
+<li><strong>Need attention</strong>: Precision issues in fixed-point implementation and phase delay</li>
+</ul>
+<p>Remember that core formula:</p>
+<p>$$ y[n] = a \cdot x[n] + (1-a) \cdot y[n-1] $$</p>
+<p>Simple, elegant, practical.</p>
+<hr>
+<p><em>References:</em></p>
+<ul>
+<li><em><a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Infinite_impulse_response">Infinite Impulse Response - Wikipedia</a></em></li>
+<li><em><a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average">Moving Average - Wikipedia</a></em></li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Introduction-Noise-is-Everywhere"><span class="toc-number">1.</span> <span class="toc-text">Introduction: Noise is Everywhere</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-Typical-Filtering-Problem"><span class="toc-number">2.</span> <span class="toc-text">A Typical Filtering Problem</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#From-RC-Filter-to-Digital-World"><span class="toc-number">3.</span> <span class="toc-text">From RC Filter to Digital World</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Mathematical-Derivation"><span class="toc-number">3.1.</span> <span class="toc-text">Mathematical Derivation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Discretization-From-Continuous-to-Digital"><span class="toc-number">3.2.</span> <span class="toc-text">Discretization: From Continuous to Digital</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#A-More-Friendly-Form"><span class="toc-number">3.3.</span> <span class="toc-text">A More Friendly Form</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Code-Implementation"><span class="toc-number">3.4.</span> <span class="toc-text">Code Implementation</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-Pitfall-of-Fixed-Point-Implementation"><span class="toc-number">4.</span> <span class="toc-text">The Pitfall of Fixed-Point Implementation</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Fixed-Point-Implementation"><span class="toc-number">4.1.</span> <span class="toc-text">Fixed-Point Implementation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Root-Cause-of-the-Problem"><span class="toc-number">4.2.</span> <span class="toc-text">Root Cause of the Problem</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Optimization-Solution"><span class="toc-number">4.3.</span> <span class="toc-text">Optimization Solution</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Optimized-Code"><span class="toc-number">4.4.</span> <span class="toc-text">Optimized Code</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Frequency-Domain-Analysis-Deeper-Understanding"><span class="toc-number">5.</span> <span class="toc-text">Frequency Domain Analysis: Deeper Understanding</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Bode-Plot-The-%E2%80%9CFingerprint%E2%80%9D-of-a-Filter"><span class="toc-number">5.1.</span> <span class="toc-text">Bode Plot: The “Fingerprint” of a Filter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Quantitative-Analysis"><span class="toc-number">5.2.</span> <span class="toc-text">Quantitative Analysis</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Practical-Recommendations"><span class="toc-number">6.</span> <span class="toc-text">Practical Recommendations</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#More-Advanced-Filters"><span class="toc-number">7.</span> <span class="toc-text">More Advanced Filters</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Conclusion"><span class="toc-number">8.</span> <span class="toc-text">Conclusion</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/01/22/first-order-digital-low-pass-filter/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/01/22/first-order-digital-low-pass-filter/&text=Derivation and Implementation of First-Order Digital Low-Pass Filter"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/01/22/first-order-digital-low-pass-filter/&title=Derivation and Implementation of First-Order Digital Low-Pass Filter"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/01/22/first-order-digital-low-pass-filter/&is_video=false&description=Derivation and Implementation of First-Order Digital Low-Pass Filter"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Derivation and Implementation of First-Order Digital Low-Pass Filter&body=Check out this article: http://example.com/2022/01/22/first-order-digital-low-pass-filter/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/01/22/first-order-digital-low-pass-filter/&title=Derivation and Implementation of First-Order Digital Low-Pass Filter"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/01/22/first-order-digital-low-pass-filter/&title=Derivation and Implementation of First-Order Digital Low-Pass Filter"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/01/22/first-order-digital-low-pass-filter/&title=Derivation and Implementation of First-Order Digital Low-Pass Filter"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/01/22/first-order-digital-low-pass-filter/&title=Derivation and Implementation of First-Order Digital Low-Pass Filter"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/01/22/first-order-digital-low-pass-filter/&name=Derivation and Implementation of First-Order Digital Low-Pass Filter&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/01/22/first-order-digital-low-pass-filter/&t=Derivation and Implementation of First-Order Digital Low-Pass Filter"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    guobin
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            displayMath: [ ["$","$"], ["\\[","\\]"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>
