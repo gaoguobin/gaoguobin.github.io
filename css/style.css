@@ -1,3 +1,10 @@
+article .content img[src*="Filter_RC"],
+article .content img[src*="circuit"] {
+  filter: invert(1) hue-rotate(180deg);
+  background: #fff;
+  padding: 10px;
+  border-radius: 4px;
+}
 .inline {
   display: inline;
 }

@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/gaoguobin/image/master/lpf_fft_analysis.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/gaoguobin/image/master/lpf_bode_plot.png">
 <meta property="article:published_time" content="2022-01-22T10:30:00.000Z">
-<meta property="article:modified_time" content="2026-01-17T15:13:03.236Z">
+<meta property="article:modified_time" content="2026-01-20T04:30:14.021Z">
 <meta property="article:author" content="guobin">
 <meta property="article:tag" content="Signal Processing">
 <meta property="article:tag" content="Filter">
@@ -120,7 +120,7 @@
     
     
       <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Introduction-Noise-is-Everywhere"><span class="toc-number">1.</span> <span class="toc-text">Introduction: Noise is Everywhere</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-Typical-Filtering-Problem"><span class="toc-number">2.</span> <span class="toc-text">A Typical Filtering Problem</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#From-RC-Filter-to-Digital-World"><span class="toc-number">3.</span> <span class="toc-text">From RC Filter to Digital World</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Mathematical-Derivation"><span class="toc-number">3.1.</span> <span class="toc-text">Mathematical Derivation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Discretization-From-Continuous-to-Digital"><span class="toc-number">3.2.</span> <span class="toc-text">Discretization: From Continuous to Digital</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#A-More-Friendly-Form"><span class="toc-number">3.3.</span> <span class="toc-text">A More Friendly Form</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Code-Implementation"><span class="toc-number">3.4.</span> <span class="toc-text">Code Implementation</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-Pitfall-of-Fixed-Point-Implementation"><span class="toc-number">4.</span> <span class="toc-text">The Pitfall of Fixed-Point Implementation</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Fixed-Point-Implementation"><span class="toc-number">4.1.</span> <span class="toc-text">Fixed-Point Implementation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Root-Cause-of-the-Problem"><span class="toc-number">4.2.</span> <span class="toc-text">Root Cause of the Problem</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Optimization-Solution"><span class="toc-number">4.3.</span> <span class="toc-text">Optimization Solution</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Optimized-Code"><span class="toc-number">4.4.</span> <span class="toc-text">Optimized Code</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Frequency-Domain-Analysis-Deeper-Understanding"><span class="toc-number">5.</span> <span class="toc-text">Frequency Domain Analysis: Deeper Understanding</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Bode-Plot-The-%E2%80%9CFingerprint%E2%80%9D-of-a-Filter"><span class="toc-number">5.1.</span> <span class="toc-text">Bode Plot: The “Fingerprint” of a Filter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Quantitative-Analysis"><span class="toc-number">5.2.</span> <span class="toc-text">Quantitative Analysis</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Practical-Recommendations"><span class="toc-number">6.</span> <span class="toc-text">Practical Recommendations</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#More-Advanced-Filters"><span class="toc-number">7.</span> <span class="toc-text">More Advanced Filters</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Conclusion"><span class="toc-number">8.</span> <span class="toc-text">Conclusion</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Introduction-Noise-is-Everywhere"><span class="toc-number">1.</span> <span class="toc-text">Introduction: Noise is Everywhere</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-Typical-Filtering-Problem"><span class="toc-number">2.</span> <span class="toc-text">A Typical Filtering Problem</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#From-RC-Filter-to-Digital-World"><span class="toc-number">3.</span> <span class="toc-text">From RC Filter to Digital World</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Mathematical-Derivation"><span class="toc-number">3.1.</span> <span class="toc-text">Mathematical Derivation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Discretization-From-Continuous-to-Digital"><span class="toc-number">3.2.</span> <span class="toc-text">Discretization: From Continuous to Digital</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#A-More-Friendly-Form"><span class="toc-number">3.3.</span> <span class="toc-text">A More Friendly Form</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Code-Implementation"><span class="toc-number">3.4.</span> <span class="toc-text">Code Implementation</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-Pitfall-of-Fixed-Point-Implementation"><span class="toc-number">4.</span> <span class="toc-text">The Pitfall of Fixed-Point Implementation</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Fixed-Point-Implementation"><span class="toc-number">4.1.</span> <span class="toc-text">Fixed-Point Implementation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Root-Cause-of-the-Problem"><span class="toc-number">4.2.</span> <span class="toc-text">Root Cause of the Problem</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Optimization-Solution"><span class="toc-number">4.3.</span> <span class="toc-text">Optimization Solution</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Optimized-Code"><span class="toc-number">4.4.</span> <span class="toc-text">Optimized Code</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Frequency-Domain-Analysis-Deeper-Understanding"><span class="toc-number">5.</span> <span class="toc-text">Frequency Domain Analysis: Deeper Understanding</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Bode-Plot-The-%E2%80%9CFingerprint%E2%80%9D-of-a-Filter"><span class="toc-number">5.1.</span> <span class="toc-text">Bode Plot: The “Fingerprint” of a Filter</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Qualitative-Analysis"><span class="toc-number">5.1.1.</span> <span class="toc-text">Qualitative Analysis</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Quantitative-Analysis"><span class="toc-number">5.2.</span> <span class="toc-text">Quantitative Analysis</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Practical-Recommendations"><span class="toc-number">6.</span> <span class="toc-text">Practical Recommendations</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#More-Advanced-Filters"><span class="toc-number">7.</span> <span class="toc-text">More Advanced Filters</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Conclusion"><span class="toc-number">8.</span> <span class="toc-text">Conclusion</span></a></li></ol>
       </div>
     
   </span>
@@ -228,7 +228,17 @@
 <p>Seems fine? Let’s look at the actual result:</p>
 <p><img src="https://raw.githubusercontent.com/gaoguobin/image/master/lpf_fixp_problem.png" alt="Fixed-Point Filter Problem"></p>
 <p>Oh no! The filtered signal shows a significant <strong>negative DC bias</strong>, and this problem becomes more severe as the signal amplitude decreases.</p>
-<h3 id="Root-Cause-of-the-Problem"><a href="#Root-Cause-of-the-Problem" class="headerlink" title="Root Cause of the Problem"></a>Root Cause of the Problem</h3><p>Analyzing the fixed-point implementation formula carefully:</p>
+<h3 id="Root-Cause-of-the-Problem"><a href="#Root-Cause-of-the-Problem" class="headerlink" title="Root Cause of the Problem"></a>Root Cause of the Problem</h3><p>To understand the problem, let’s first derive the fixed-point formulation from the basic filter equation.</p>
+<p>Starting from the continuous form and applying fixed-point scaling:</p>
+<p>$$ V_{out(n)} = \frac{(a_{scaled} \cdot V_{in(n)} + (IQN_1 - a_{scaled}) \cdot V_{out(n-1)})}{IQN_1} \tag{13} $$</p>
+<p>Where:</p>
+<ul>
+<li>$IQN_1 = 1 << q$ (the scaling factor, where q is the number of fractional bits)</li>
+<li>$a_{scaled} = a \cdot IQN_1$ (the scaled filter coefficient)</li>
+</ul>
+<p>This can be simplified to a more computationally efficient recursive form:</p>
+<p>$$ V_{out(n)} = V_{out(n-1)} + \frac{a_{scaled} \cdot (V_{in(n)} - V_{out(n-1)})}{IQN_1} \tag{14} $$</p>
+<p>Now, analyzing the naive fixed-point implementation formula carefully:</p>
 <p>$$ V_{out(n)} = V_{out(n-1)} + ((a_{scaled}*(V_{in(n)} - V_{out(n-1)}))>>q) \tag{15} $$</p>
 <p>The problem lies in the right shift operation! In fixed-point arithmetic, right shift is equivalent to division and loses precision.</p>
 <p>When $|a_{scaled}*(V_{in(n)} - V_{out(n-1)})|$ is less than the shift amount, the result becomes 0. This means new inputs cannot correctly affect the output, leading to cumulative error.</p>
@@ -238,26 +248,43 @@
 <li>Accumulate to an intermediate variable</li>
 <li>Finally shift right by the remaining (q-n) bits</li>
 </ol>
-<p>The formula is modified to:</p>
+<p>The key is choosing an appropriate n value. To ensure correct filter behavior, we must satisfy this critical constraint:</p>
+<p>$$ (a_{scaled} \cdot 1) >> n \geq 1 \tag{16} $$</p>
+<p>This constraint guarantees that when the smallest possible input (magnitude of 1) is scaled and shifted right by n bits, the result is still at least 1. This ensures that new samples—whether positive or negative—can correctly influence the filter output.</p>
+<p>From this constraint, we can derive the upper bound for n:</p>
+<p>$$ n \leq \log_2 a_{scaled} \tag{17} $$</p>
+<p>The formula is modified to use a two-stage accumulation:</p>
 <p>$$ V_{temp(n)} = V_{temp(n-1)} + ((a_{scaled}*(V_{in(n)} - V_{out(n-1)}))>>n) \tag{18} $$</p>
 <p>$$ V_{out(n)} = V_{temp(n)}>>(q - n) \tag{19} $$</p>
-<p>The key is choosing an appropriate n value that satisfies:</p>
-<p>$$ n \leq \log_2 a_{scaled} \tag{17} $$</p>
 <h3 id="Optimized-Code"><a href="#Optimized-Code" class="headerlink" title="Optimized Code"></a>Optimized Code</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">lpf_fixp_Op</span>(<span class="params">x, q, fs, fc</span>):</span><br><span class="line">    a = <span class="number">2</span>*np.pi*fc/(<span class="number">2</span>*np.pi*fc+fs)</span><br><span class="line">    a_scaled = np.<span class="built_in">round</span>(a*(<span class="number">1</span>&lt;&lt;q)).astype(<span class="built_in">int</span>)</span><br><span class="line">    n = np.floor(np.log2(a_scaled)).astype(<span class="built_in">int</span>)</span><br><span class="line">    y = np.zeros_like(x,dtype=<span class="built_in">int</span>)</span><br><span class="line">    temp = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(y)):</span><br><span class="line">        <span class="keyword">if</span> i == <span class="number">0</span>:</span><br><span class="line">            y[i] = <span class="number">0</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            temp = temp + ((a_scaled*(x[i] - y[i-<span class="number">1</span>]))&gt;&gt;n)</span><br><span class="line">            y[i] = temp&gt;&gt;(q-n)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> y</span><br></pre></td></tr></table></figure>
 <p>Comparison of results:</p>
 <p><img src="https://raw.githubusercontent.com/gaoguobin/image/master/lpf_fixp_optimized.png" alt="Optimized Fixed-Point Filter"></p>
 <p>Perfect! The negative DC bias is gone, and the fixed-point filter works correctly.</p>
 <h2 id="Frequency-Domain-Analysis-Deeper-Understanding"><a href="#Frequency-Domain-Analysis-Deeper-Understanding" class="headerlink" title="Frequency Domain Analysis: Deeper Understanding"></a>Frequency Domain Analysis: Deeper Understanding</h2><p>The previous analysis was based on the time domain (observing signal changes over time). In filter design and control systems, <strong>frequency domain analysis</strong> is more common—observing the attenuation of different frequency components.</p>
 <p>Let’s use FFT to examine the signal spectrum:</p>
-<p><img src="https://raw.githubusercontent.com/gaoguobin/image/master/lpf_fft_analysis.png" alt="FFT Spectrum Analysis"></p>
-<p>From the frequency perspective, we can clearly see:</p>
+<p><img src="https://raw.githubusercontent.com/gaoguobin/image/master/lpf_fft_analysis.png" alt="FFT Spectrum Analysis showing frequency domain representation before and after filtering"></p>
+<p><em>Figure: FFT spectrum analysis of signals before and after filtering. From the frequency domain perspective:</em></p>
 <ul>
-<li>Input signal contains 50Hz (desired signal) and 5000Hz (noise)</li>
-<li>After fc=3000Hz filtering, 5000Hz noise is somewhat attenuated</li>
-<li>After fc=500Hz filtering, 5000Hz noise is almost completely suppressed</li>
+<li><em>Input signal contains strong 50Hz component (desired signal) and 5000Hz component (noise)</em></li>
+<li><em>After fc=3000Hz filtering: 5000Hz noise amplitude reduced from 1.0 to 0.514 (51.4% remaining)</em></li>
+<li><em>After fc=500Hz filtering: 5000Hz noise amplitude reduced from 1.0 to 0.100 (10% remaining)</em></li>
+<li><em>50Hz signal remains essentially unchanged in both cases</em></li>
 </ul>
 <h3 id="Bode-Plot-The-“Fingerprint”-of-a-Filter"><a href="#Bode-Plot-The-“Fingerprint”-of-a-Filter" class="headerlink" title="Bode Plot: The “Fingerprint” of a Filter"></a>Bode Plot: The “Fingerprint” of a Filter</h3><p>The Bode plot is a standard tool for describing a filter’s frequency response. Let’s plot it:</p>
-<p><img src="https://raw.githubusercontent.com/gaoguobin/image/master/lpf_bode_plot.png" alt="Bode Plot"></p>
+<p><img src="https://raw.githubusercontent.com/gaoguobin/image/master/lpf_bode_plot.png" alt="Bode Plot showing magnitude and phase response for fc=500Hz and fc=3000Hz"></p>
+<p><em>Figure: Bode plot comparison of first-order low-pass filters with cutoff frequencies at 500Hz and 3000Hz. The magnitude plot (top) shows attenuation in decibels, while the phase plot (bottom) shows phase shift in degrees. Key points: at cutoff frequency, gain = -3.01dB and phase = -45°.</em></p>
+<h4 id="Qualitative-Analysis"><a href="#Qualitative-Analysis" class="headerlink" title="Qualitative Analysis"></a>Qualitative Analysis</h4><p>From the Bode plot, we can draw four key conclusions:</p>
+<ol>
+<li><p><strong>Same cutoff frequency, different input frequencies</strong>: When comparing 50Hz vs 5000Hz signals filtered by the same cutoff frequency (e.g., fc=500Hz), the higher frequency signal (5000Hz) experiences much greater magnitude attenuation.</p>
+</li>
+<li><p><strong>Same cutoff frequency, different input frequencies</strong>: For the same cutoff frequency, higher input frequencies result in more phase lag. The 5000Hz signal has significantly more phase shift than the 50Hz signal.</p>
+</li>
+<li><p><strong>Different cutoff frequencies, same input frequency</strong>: When comparing different cutoff frequencies (fc=500Hz vs fc=3000Hz) filtering the same 50Hz signal, the lower cutoff frequency causes slightly more magnitude attenuation.</p>
+</li>
+<li><p><strong>Different cutoff frequencies, same input frequency</strong>: For the same input frequency, lower cutoff frequencies produce more phase lag. The fc=500Hz filter introduces more phase shift than fc=3000Hz for all frequencies.</p>
+</li>
+</ol>
+<p>These four observations reveal the fundamental trade-off in filter design: <strong>lower cutoff frequencies provide better noise rejection but introduce more phase lag</strong>.</p>
 <p>Several important conclusions can be drawn from the Bode plot:</p>
 <div class="table-container">
 <table>
@@ -270,20 +297,84 @@
 <tbody>
 <tr>
 <td><strong>Magnitude Response</strong></td>
-<td>Higher frequency → more attenuation; lower cutoff frequency → stronger attenuation</td>
+<td>For a fixed cutoff frequency, higher input frequencies experience greater attenuation. For a fixed input frequency, lower cutoff frequencies cause greater attenuation.</td>
 </tr>
 <tr>
 <td><strong>Phase Response</strong></td>
-<td>Higher frequency → more phase lag; lower cutoff frequency → more lag</td>
+<td>For a fixed cutoff frequency, higher input frequencies experience more phase lag. For a fixed input frequency, lower cutoff frequencies cause more phase lag.</td>
 </tr>
 <tr>
 <td><strong>At Cutoff Frequency</strong></td>
-<td>Gain is -3.01dB (output is 0.707× input), phase shift is -45°</td>
+<td>Gain is -3.01dB (output amplitude = 0.707 × input), phase shift is exactly -45°</td>
+</tr>
+<tr>
+<td><strong>Signal-to-Noise Ratio</strong></td>
+<td>With fc=500Hz: 50Hz signal has 0.5% attenuation, 5000Hz noise has 90% attenuation. With fc=3000Hz: 50Hz signal has 0.02% attenuation, 5000Hz noise has 48.6% attenuation.</td>
 </tr>
 </tbody>
 </table>
 </div>
-<h3 id="Quantitative-Analysis"><a href="#Quantitative-Analysis" class="headerlink" title="Quantitative Analysis"></a>Quantitative Analysis</h3><p>Let’s use specific data to illustrate:</p>
+<h3 id="Quantitative-Analysis"><a href="#Quantitative-Analysis" class="headerlink" title="Quantitative Analysis"></a>Quantitative Analysis</h3><p>To better understand the filter’s behavior, here’s the complete frequency response data:</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Test Frequency</th>
+<th>fc=500Hz Magnitude</th>
+<th>fc=500Hz V_ratio</th>
+<th>fc=500Hz Phase</th>
+<th>fc=3000Hz Magnitude</th>
+<th>fc=3000Hz V_ratio</th>
+<th>fc=3000Hz Phase</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>50Hz (signal)</strong></td>
+<td>-0.04 dB</td>
+<td>0.995</td>
+<td>-5.71°</td>
+<td>-0.01 dB</td>
+<td>0.998</td>
+<td>-0.96°</td>
+</tr>
+<tr>
+<td><strong>500Hz (cutoff)</strong></td>
+<td>-3.01 dB</td>
+<td>0.707</td>
+<td>-45.00°</td>
+<td>-0.28 dB</td>
+<td>0.968</td>
+<td>-9.46°</td>
+</tr>
+<tr>
+<td><strong>3000Hz (cutoff)</strong></td>
+<td>-15.23 dB</td>
+<td>0.173</td>
+<td>-80.54°</td>
+<td>-3.01 dB</td>
+<td>0.707</td>
+<td>-45.00°</td>
+</tr>
+<tr>
+<td><strong>5000Hz (noise)</strong></td>
+<td>-20.00 dB</td>
+<td>0.100</td>
+<td>-84.29°</td>
+<td>-5.78 dB</td>
+<td>0.514</td>
+<td>-59.04°</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Key observations</strong>:</p>
+<ul>
+<li><strong>50Hz signal</strong>: Virtually unaffected by either filter (less than 1% attenuation)</li>
+<li><strong>5000Hz noise</strong>: fc=500Hz filter removes 90% of noise; fc=3000Hz filter removes 48.6%</li>
+<li><strong>Trade-off</strong>: Lower cutoff frequency = better noise rejection but more phase lag</li>
+</ul>
+<p>Let’s use specific data to illustrate:</p>
 <div class="table-container">
 <table>
 <thead>
@@ -369,7 +460,7 @@
     
     
       <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Introduction-Noise-is-Everywhere"><span class="toc-number">1.</span> <span class="toc-text">Introduction: Noise is Everywhere</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-Typical-Filtering-Problem"><span class="toc-number">2.</span> <span class="toc-text">A Typical Filtering Problem</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#From-RC-Filter-to-Digital-World"><span class="toc-number">3.</span> <span class="toc-text">From RC Filter to Digital World</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Mathematical-Derivation"><span class="toc-number">3.1.</span> <span class="toc-text">Mathematical Derivation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Discretization-From-Continuous-to-Digital"><span class="toc-number">3.2.</span> <span class="toc-text">Discretization: From Continuous to Digital</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#A-More-Friendly-Form"><span class="toc-number">3.3.</span> <span class="toc-text">A More Friendly Form</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Code-Implementation"><span class="toc-number">3.4.</span> <span class="toc-text">Code Implementation</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-Pitfall-of-Fixed-Point-Implementation"><span class="toc-number">4.</span> <span class="toc-text">The Pitfall of Fixed-Point Implementation</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Fixed-Point-Implementation"><span class="toc-number">4.1.</span> <span class="toc-text">Fixed-Point Implementation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Root-Cause-of-the-Problem"><span class="toc-number">4.2.</span> <span class="toc-text">Root Cause of the Problem</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Optimization-Solution"><span class="toc-number">4.3.</span> <span class="toc-text">Optimization Solution</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Optimized-Code"><span class="toc-number">4.4.</span> <span class="toc-text">Optimized Code</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Frequency-Domain-Analysis-Deeper-Understanding"><span class="toc-number">5.</span> <span class="toc-text">Frequency Domain Analysis: Deeper Understanding</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Bode-Plot-The-%E2%80%9CFingerprint%E2%80%9D-of-a-Filter"><span class="toc-number">5.1.</span> <span class="toc-text">Bode Plot: The “Fingerprint” of a Filter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Quantitative-Analysis"><span class="toc-number">5.2.</span> <span class="toc-text">Quantitative Analysis</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Practical-Recommendations"><span class="toc-number">6.</span> <span class="toc-text">Practical Recommendations</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#More-Advanced-Filters"><span class="toc-number">7.</span> <span class="toc-text">More Advanced Filters</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Conclusion"><span class="toc-number">8.</span> <span class="toc-text">Conclusion</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Introduction-Noise-is-Everywhere"><span class="toc-number">1.</span> <span class="toc-text">Introduction: Noise is Everywhere</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-Typical-Filtering-Problem"><span class="toc-number">2.</span> <span class="toc-text">A Typical Filtering Problem</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#From-RC-Filter-to-Digital-World"><span class="toc-number">3.</span> <span class="toc-text">From RC Filter to Digital World</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Mathematical-Derivation"><span class="toc-number">3.1.</span> <span class="toc-text">Mathematical Derivation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Discretization-From-Continuous-to-Digital"><span class="toc-number">3.2.</span> <span class="toc-text">Discretization: From Continuous to Digital</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#A-More-Friendly-Form"><span class="toc-number">3.3.</span> <span class="toc-text">A More Friendly Form</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Code-Implementation"><span class="toc-number">3.4.</span> <span class="toc-text">Code Implementation</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-Pitfall-of-Fixed-Point-Implementation"><span class="toc-number">4.</span> <span class="toc-text">The Pitfall of Fixed-Point Implementation</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Fixed-Point-Implementation"><span class="toc-number">4.1.</span> <span class="toc-text">Fixed-Point Implementation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Root-Cause-of-the-Problem"><span class="toc-number">4.2.</span> <span class="toc-text">Root Cause of the Problem</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Optimization-Solution"><span class="toc-number">4.3.</span> <span class="toc-text">Optimization Solution</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Optimized-Code"><span class="toc-number">4.4.</span> <span class="toc-text">Optimized Code</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Frequency-Domain-Analysis-Deeper-Understanding"><span class="toc-number">5.</span> <span class="toc-text">Frequency Domain Analysis: Deeper Understanding</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Bode-Plot-The-%E2%80%9CFingerprint%E2%80%9D-of-a-Filter"><span class="toc-number">5.1.</span> <span class="toc-text">Bode Plot: The “Fingerprint” of a Filter</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Qualitative-Analysis"><span class="toc-number">5.1.1.</span> <span class="toc-text">Qualitative Analysis</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Quantitative-Analysis"><span class="toc-number">5.2.</span> <span class="toc-text">Quantitative Analysis</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Practical-Recommendations"><span class="toc-number">6.</span> <span class="toc-text">Practical Recommendations</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#More-Advanced-Filters"><span class="toc-number">7.</span> <span class="toc-text">More Advanced Filters</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Conclusion"><span class="toc-number">8.</span> <span class="toc-text">Conclusion</span></a></li></ol>
       </div>
     
 
